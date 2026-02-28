@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Hackathon Tracker - AWS Centric Architecture
+  Fully managed platform for performance tracking.
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: nodejs18.x
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref TrackerTable
+        NODE_ENV: production
+
+Resources:
+  TrackerTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: HackathonTracker
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
+  # COGNITO: Identity Management (RBAC)
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: hackathon-tracker-users
+      UsernameAttributes: [email]
+      AutoVerifiedAttributes: [email]
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      ClientName: HackathonTrackerWeb
+
+  # API GATEWAY & LAMBDA
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Cors: "'*'"
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt UserPool.Arn
+
+  ProgressLogFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./backend
+      Handler: handlers/progress.logUpdate
+      Events:
+        LogUpdate:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /api/progress/update
+            Method: post
+
+  GetProgressFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./backend
+      Handler: handlers/progress.getHistory
+      Events:
+        GetHistory:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /api/progress/{teamId}
+            Method: get
+
+Outputs:
+  ApiUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/prod/"

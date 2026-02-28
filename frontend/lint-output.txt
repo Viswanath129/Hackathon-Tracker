@@ -1,0 +1,66 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+B:\projects\Team Management\Hackathon-Tracker\frontend\src\App.jsx
+   1:8   error  'React' is defined but never used           no-unused-vars
+  13:27  error  'children' is missing in props validation   react/prop-types
+  13:37  error  'adminOnly' is missing in props validation  react/prop-types
+
+B:\projects\Team Management\Hackathon-Tracker\frontend\src\context\AuthContext.jsx
+   1:8   error    'React' is defined but never used                                                                           no-unused-vars
+   4:14  warning  Fast refresh only works when a file only exports components. Move your React context(s) to a separate file  react-refresh/only-export-components
+   6:32  error    'children' is missing in props validation                                                                   react/prop-types
+  21:22  error    'err' is defined but never used                                                                             no-unused-vars
+
+B:\projects\Team Management\Hackathon-Tracker\frontend\src\pages\AdminDashboard.jsx
+   1:8   error    'React' is defined but never used                                                                              no-unused-vars
+  19:22  error    'error' is defined but never used                                                                              no-unused-vars
+  19:29  error    Empty block statement                                                                                          no-empty
+  24:8   warning  React Hook useEffect has a missing dependency: 'user.token'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+B:\projects\Team Management\Hackathon-Tracker\frontend\src\pages\AdminStudentDetail.jsx
+   1:8   error    'React' is defined but never used                                                                              no-unused-vars
+  20:22  error    'error' is defined but never used                                                                              no-unused-vars
+  20:29  error    Empty block statement                                                                                          no-empty
+  25:8   warning  React Hook useEffect has a missing dependency: 'user.token'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+B:\projects\Team Management\Hackathon-Tracker\frontend\src\pages\AdminStudentsList.jsx
+   1:8   error    'React' is defined but never used                                                                                 no-unused-vars
+   4:65  error    'User' is defined but never used                                                                                  no-unused-vars
+  22:18  error    'error' is defined but never used                                                                                 no-unused-vars
+  22:25  error    Empty block statement                                                                                             no-empty
+  27:43  warning  React Hook useEffect has a missing dependency: 'fetchStudents'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+B:\projects\Team Management\Hackathon-Tracker\frontend\src\pages\Login.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+B:\projects\Team Management\Hackathon-Tracker\frontend\src\pages\ProjectDetails.jsx
+   1:8   error    'React' is defined but never used                                                                                 no-unused-vars
+  31:18  error    'error' is defined but never used                                                                                 no-unused-vars
+  43:18  error    'error' is defined but never used                                                                                 no-unused-vars
+  43:25  error    Empty block statement                                                                                             no-empty
+  46:43  warning  React Hook useEffect has a missing dependency: 'fetchProjects'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  56:18  error    'error' is defined but never used                                                                                 no-unused-vars
+  56:25  error    Empty block statement                                                                                             no-empty
+  67:18  error    'error' is defined but never used                                                                                 no-unused-vars
+  67:25  error    Empty block statement                                                                                             no-empty
+  83:18  error    'error' is defined but never used                                                                                 no-unused-vars
+  83:25  error    Empty block statement                                                                                             no-empty
+
+B:\projects\Team Management\Hackathon-Tracker\frontend\src\pages\Register.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+B:\projects\Team Management\Hackathon-Tracker\frontend\src\pages\StudentDashboard.jsx
+   1:8   error    'React' is defined but never used                                                                             no-unused-vars
+  35:39  warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  45:18  error    'error' is defined but never used                                                                             no-unused-vars
+
+B:\projects\Team Management\Hackathon-Tracker\frontend\vite.config.js
+  1:14  error  'require' is not defined    no-undef
+  3:1   error  'module' is not defined     no-undef
+  7:25  error  '__dirname' is not defined  no-undef
+
+✖ 39 problems (33 errors, 6 warnings)
+
