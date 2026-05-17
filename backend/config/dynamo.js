@@ -16,4 +16,4 @@ const docClient = DynamoDBDocumentClient.from(client, {
     },
 });
 
-module.exports = { docClient, TABLE_NAME: process.env.DYNAMODB_TABLE || "HackathonTracker" };
+module.exports = { docClient, TABLE_NAME: process.env.TABLE_NAME || process.env.DYNAMODB_TABLE || "HackathonTracker" };

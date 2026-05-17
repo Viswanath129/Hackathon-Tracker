@@ -28,16 +28,16 @@ We will use a single table named `HackathonTracker` to minimize cost and maximiz
 
 ## 🛠️ Step-by-Step Execution phases
 
-### Phase 1: Storage & Database Foundation (Current Focus)
-1.  [ ] Install AWS SDK for DynamoDB.
-2.  [ ] Create DynamoDB Table via AWS CLI.
-3.  [ ] Implement `dynamoClient.js` abstraction.
-4.  [ ] Migrate data access logic from Mongoose to DynamoDB.
+### Phase 1: Storage & Database Foundation (Completed)
+1.  [x] Install AWS SDK for DynamoDB.
+2.  [x] Create DynamoDB Table via AWS CLI.
+3.  [x] Implement `dynamoClient.js` abstraction.
+4.  [x] Migrate data access logic from Mongoose to DynamoDB.
 
 ### Phase 2: Serverless Logic (Lambda)
-1.  [ ] Setup AWS SAM (Serverless Application Model).
-2.  [ ] Refactor Express routes into standalone Lambda handlers.
-3.  [ ] Configure `template.yaml` for infrastructure as code.
+1.  [x] Setup AWS SAM (Serverless Application Model).
+2.  [x] Refactor Express routes into standalone Lambda handlers.
+3.  [x] Configure `template.yaml` for infrastructure as code.
 
 ### Phase 3: Identity Management (Cognito)
 1.  [ ] Create Cognito User Pool.

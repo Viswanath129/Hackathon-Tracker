@@ -67,6 +67,9 @@ Resources:
     Properties:
       CodeUri: ./backend
       Handler: handlers/progress.logUpdate
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TrackerTable
       Events:
         LogUpdate:
           Type: Api
@@ -80,12 +83,15 @@ Resources:
     Properties:
       CodeUri: ./backend
       Handler: handlers/progress.getHistory
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TrackerTable
       Events:
         GetHistory:
           Type: Api
           Properties:
             RestApiId: !Ref ApiGateway
-            Path: /api/progress/{teamId}
+            Path: /api/progress/{projectId}
             Method: get
 
 Outputs:
