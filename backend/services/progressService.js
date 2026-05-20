@@ -2,9 +2,14 @@ const { PutCommand, QueryCommand } = require("@aws-sdk/lib-dynamodb");
 const { docClient, TABLE_NAME } = require("../config/dynamo");
 
 /**
- * Log a progress update for a project
- * PK: PROJ#<id>
+ * Log a progress update for a project in DynamoDB.
+ * PK: PROJ#<projectId>
  * SK: LOG#<timestamp>
+ *
+ * @param {string} projectId - The unique identifier for the project.
+ * @param {string} updateText - A text description of the progress update.
+ * @param {number} deltaPercentage - The change in progress percentage (0-100).
+ * @returns {Promise<{success: boolean, timestamp: string}>}
  */
 const logProgress = async (projectId, updateText, deltaPercentage) => {
     const timestamp = new Date().toISOString();
@@ -30,6 +35,12 @@ const logProgress = async (projectId, updateText, deltaPercentage) => {
     }
 };
 
+/**
+ * Retrieve all progress logs for a specific project.
+ *
+ * @param {string} projectId - The unique identifier for the project.
+ * @returns {Promise<Array<Object>>} - An array of progress log objects.
+ */
 const getProgressLogs = async (projectId) => {
     const params = {
         TableName: TABLE_NAME,
@@ -42,7 +53,7 @@ const getProgressLogs = async (projectId) => {
 
     try {
         const data = await docClient.send(new QueryCommand(params));
-        return data.Items;
+        return data.Items || [];
     } catch (error) {
         console.error("DynamoDB Query Error:", error);
         throw error;
