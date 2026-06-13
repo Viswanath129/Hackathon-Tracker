@@ -36,7 +36,7 @@ We will use a single table named `HackathonTracker` to minimize cost and maximiz
 
 ### Phase 2: Serverless Logic (Lambda)
 1.  [ ] Setup AWS SAM (Serverless Application Model).
-2.  [ ] Refactor Express routes into standalone Lambda handlers.
+2.  [x] Refactor Express routes into standalone Lambda handlers. (Progress tracking implemented)
 3.  [ ] Configure `template.yaml` for infrastructure as code.
 
 ### Phase 3: Identity Management (Cognito)
