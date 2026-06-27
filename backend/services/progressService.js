@@ -2,6 +2,11 @@ const { PutCommand, QueryCommand } = require("@aws-sdk/lib-dynamodb");
 const { docClient, TABLE_NAME } = require("../config/dynamo");
 
 /**
+ * Progress Service for handling DynamoDB interactions for project updates.
+ * Note: teamId from the API is used as the projectId here to map to the 'PROJ#' PK.
+ */
+
+/**
  * Log a progress update for a project
  * PK: PROJ#<id>
  * SK: LOG#<timestamp>
