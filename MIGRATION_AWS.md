@@ -35,9 +35,10 @@ We will use a single table named `HackathonTracker` to minimize cost and maximiz
 4.  [ ] Migrate data access logic from Mongoose to DynamoDB.
 
 ### Phase 2: Serverless Logic (Lambda)
-1.  [ ] Setup AWS SAM (Serverless Application Model).
-2.  [ ] Refactor Express routes into standalone Lambda handlers.
-3.  [ ] Configure `template.yaml` for infrastructure as code.
+1.  [x] Setup AWS SAM (Serverless Application Model).
+2.  [/] Refactor Express routes into standalone Lambda handlers.
+    - [x] Progress tracking handlers implemented.
+3.  [x] Configure `template.yaml` for infrastructure as code.
 
 ### Phase 3: Identity Management (Cognito)
 1.  [ ] Create Cognito User Pool.
