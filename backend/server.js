@@ -9,6 +9,7 @@ const path = require('path');
 const authRoutes = require('./routes/authRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const progressRoutes = require('./routes/progressRoutes');
 console.log('AWS Cloud persistence active.');
 
 const app = express();
@@ -44,6 +45,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/progress', progressRoutes);
 
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0';
