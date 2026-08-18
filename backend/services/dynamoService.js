@@ -64,6 +64,16 @@ const dynamoService = {
         return Item;
     },
 
+    getProjectById: async (projectId) => {
+        const { Items } = await docClient.send(new ScanCommand({
+            TableName: TABLE_NAME,
+            FilterExpression: "SK = :sk AND #type = :type",
+            ExpressionAttributeNames: { "#type": "type" },
+            ExpressionAttributeValues: { ":sk": `PROJ#${projectId}`, ":type": "PROJECT" }
+        }));
+        return (Items && Items.length > 0) ? Items[0] : null;
+    },
+
     getHackathonsByUser: async (email) => {
         const { Items } = await docClient.send(new QueryCommand({
             TableName: TABLE_NAME,
