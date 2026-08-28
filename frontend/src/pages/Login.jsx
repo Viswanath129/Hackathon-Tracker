@@ -4,6 +4,7 @@ import api from '../api';
 import { AuthContext } from '../context/AuthContext';
 import { Code2, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
+import PropTypes from 'prop-types';
 
 const Login = ({ isAdmin = false }) => {
     const [email, setEmail] = useState('');
@@ -134,6 +135,10 @@ const Login = ({ isAdmin = false }) => {
             </motion.div>
         </div>
     );
+};
+
+Login.propTypes = {
+    isAdmin: PropTypes.bool
 };
 
 export default Login;
