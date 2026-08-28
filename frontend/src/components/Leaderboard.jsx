@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../api';
 import { Trophy, Star, Clock, Shield, Award, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
+import PropTypes from 'prop-types';
 
 const Leaderboard = ({ user }) => {
     const [teams, setTeams] = useState([]);
@@ -114,6 +115,12 @@ const Leaderboard = ({ user }) => {
             </div>
         </div>
     );
+};
+
+Leaderboard.propTypes = {
+    user: PropTypes.shape({
+        token: PropTypes.string
+    })
 };
 
 export default Leaderboard;
