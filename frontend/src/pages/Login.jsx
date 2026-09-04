@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
@@ -137,3 +138,7 @@ const Login = ({ isAdmin = false }) => {
 };
 
 export default Login;
+
+Login.propTypes = {
+    isAdmin: PropTypes.bool
+};
