@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import api from '../api';
 import { AuthContext } from '../context/AuthContext';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, User, Code2, Download, FileText, Calendar, Database, Server, Clock, Star, MessageSquare, CheckCircle2, ShieldCheck, Mail, Building, Trash2, Flag, Award } from 'lucide-react';
+import { ArrowLeft, Code2, Download, FileText, Calendar, Database, Server, Clock, Star, MessageSquare, CheckCircle2, ShieldCheck, Mail, Building, Trash2, Flag, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Loader from '../components/Loader';
 
@@ -89,8 +89,7 @@ const AdminTeamDetail = () => {
         }
     };
 
-    const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } };
-    const itemVariants = { hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } };
+        const itemVariants = { hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } };
 
     if (loading) return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
