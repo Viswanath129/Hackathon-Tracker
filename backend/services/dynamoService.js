@@ -119,6 +119,22 @@ const dynamoService = {
         return Items;
     },
 
+    getProjectById: async (projId) => {
+        const params = {
+            TableName: TABLE_NAME,
+            FilterExpression: "SK = :sk AND #type = :type",
+            ExpressionAttributeNames: {
+                "#type": "type"
+            },
+            ExpressionAttributeValues: {
+                ":sk": `PROJ#${projId}`,
+                ":type": "PROJECT"
+            }
+        };
+        const { Items } = await docClient.send(new ScanCommand(params));
+        return Items && Items.length > 0 ? Items[0] : null;
+    },
+
     getAllProjects: async () => {
         const { Items } = await docClient.send(new ScanCommand({ TableName: TABLE_NAME }));
         return (Items || []).filter(i => i.type === 'PROJECT');
