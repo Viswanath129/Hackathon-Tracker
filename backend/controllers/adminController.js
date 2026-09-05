@@ -75,13 +75,14 @@ const getTeamById = async (req, res) => {
             const projects = await dynamoService.getAllProjects();
             const teamProjects = projects.filter(p => p.team_id === team._id);
             const activities = await dynamoService.getActivitiesByUser(team.email, 20);
+            const issues = await dynamoService.getIssuesByUser(team.email);
 
             const populatedProjects = await Promise.all(teamProjects.map(async p => {
                 const reports = await dynamoService.getReportsByProject(p._id);
                 return { ...p, reports };
             }));
 
-            res.json({ ...team, hackathons, projects: populatedProjects, activities: activities || [] });
+            res.json({ ...team, hackathons, projects: populatedProjects, activities: activities || [], issues: issues || [] });
         } else {
             res.status(404).json({ message: 'Team not found' });
         }
