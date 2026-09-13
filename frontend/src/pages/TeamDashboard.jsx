@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import api from '../api';
 import { AuthContext } from '../context/AuthContext';
-import { User, Code2, Plus, Calendar, AlertCircle, LogOut, Settings, Trash2, Edit3, CheckCircle2, Clock, Eye, EyeOff, AlertTriangle, Flag, Image as ImageIcon, TrendingUp, Users, Database, UploadCloud } from 'lucide-react';
+import { User, Code2, Plus, Calendar, AlertCircle, LogOut, Settings, Trash2, Edit3, CheckCircle2, Clock, Flag, Image as ImageIcon, TrendingUp, Users, Database } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Loader from '../components/Loader';
@@ -313,8 +313,12 @@ const TeamDashboard = () => {
                                                 <option value="Member">Member</option>
                                                 <option value="Lead">Lead</option>
                                             </select>
+                                            {memberError && <p className="text-[10px] font-bold text-red-500 mb-2 bg-red-50 p-1.5 rounded-lg border border-red-100">{memberError}</p>}
+                                            {memberSuccess && <p className="text-[10px] font-bold text-emerald-500 mb-2 bg-emerald-50 p-1.5 rounded-lg border border-emerald-100">Teammate added successfully</p>}
                                             <div className="flex gap-2">
-                                                <button type="submit" className="flex-1 py-1.5 bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] text-white rounded-xl text-xs font-bold border border-white/40 shadow-sm hover:opacity-90">Save</button>
+                                                <button type="submit" disabled={memberSaving} className="flex-1 py-1.5 bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] text-white rounded-xl text-xs font-bold border border-white/40 shadow-sm hover:opacity-90 disabled:opacity-50">
+                                                    {memberSaving ? 'Saving...' : 'Save'}
+                                                </button>
                                                 <button type="button" onClick={() => setShowAddMember(false)} className="flex-1 py-1.5 bg-white/60 text-slate-700 rounded-xl text-xs font-bold border border-white/80">Cancel</button>
                                             </div>
                                         </motion.form>
