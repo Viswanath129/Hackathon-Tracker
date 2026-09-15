@@ -102,6 +102,22 @@ const dynamoService = {
     // ---------------------------------------------------------
     // PROJECTS
     // ---------------------------------------------------------
+    getProjectById: async (projectId) => {
+        const params = {
+            TableName: TABLE_NAME,
+            FilterExpression: 'SK = :sk AND #type = :type',
+            ExpressionAttributeNames: {
+                '#type': 'type'
+            },
+            ExpressionAttributeValues: {
+                ':sk': `PROJ#${projectId}`,
+                ':type': 'PROJECT'
+            }
+        };
+        const { Items } = await docClient.send(new ScanCommand(params));
+        return Items && Items.length > 0 ? Items[0] : null;
+    },
+
     getProject: async (hackId, projId) => {
         const { Item } = await docClient.send(new GetCommand({
             TableName: TABLE_NAME,
