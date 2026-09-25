@@ -1,9 +1,10 @@
 import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObj';
 import { Eye, EyeOff, Code2, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import PropTypes from 'prop-types';
 
 const Register = ({ isAdmin = false }) => {
     const [teamName, setTeamName] = useState('');
@@ -138,6 +139,10 @@ const Register = ({ isAdmin = false }) => {
             </motion.div>
         </div>
     );
+};
+
+Register.propTypes = {
+    isAdmin: PropTypes.bool,
 };
 
 export default Register;
