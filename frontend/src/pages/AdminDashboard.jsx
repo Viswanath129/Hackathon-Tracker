@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useMemo } from 'react';
 import api from '../api';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObj';
 import { Users, LayoutDashboard, Target, CheckCircle2, Code2, LogOut, BarChart3, TrendingUp, Clock, Database } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';

@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import api from '../api';
-import { AuthContext } from '../context/AuthContext';
-import { User, Code2, Plus, Calendar, AlertCircle, LogOut, Settings, Trash2, Edit3, CheckCircle2, Clock, Eye, EyeOff, AlertTriangle, Flag, Image as ImageIcon, TrendingUp, Users, Database, UploadCloud } from 'lucide-react';
+import { AuthContext } from '../context/AuthContextObj';
+import { User, Code2, Plus, Calendar, AlertCircle, LogOut, Settings, Trash2, Edit3, CheckCircle2, Clock, Flag, Image as ImageIcon, TrendingUp, Users, Database, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Loader from '../components/Loader';
@@ -40,6 +40,7 @@ const TeamDashboard = () => {
     const [issueSaving, setIssueSaving] = useState(false);
     const [issueSuccess, setIssueSuccess] = useState(false);
     const [activities, setActivities] = useState([]);
+    const [searchHackathonTerm, setSearchHackathonTerm] = useState('');
 
     const fetchData = useCallback(async () => {
         try {
@@ -65,6 +66,8 @@ const TeamDashboard = () => {
     }, [user.token]);
 
     useEffect(() => { fetchData(); }, [fetchData]);
+
+    const filteredHackathons = hackathons.filter(h => h.hackathon_name?.toLowerCase().includes(searchHackathonTerm.toLowerCase()));
 
     const handleAddHackathon = async (e) => {
         e.preventDefault();
@@ -302,6 +305,8 @@ const TeamDashboard = () => {
                                 <AnimatePresence>
                                     {showAddMember && (
                                         <motion.form initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} onSubmit={handleAddMember} className="mb-4 bg-white/40 p-3 rounded-2xl border border-white/80 shadow-sm">
+                                            {memberError && <p className="text-red-500 text-xs font-bold mb-2">{memberError}</p>}
+                                            {memberSuccess && <p className="text-emerald-500 text-xs font-bold mb-2">Member added successfully</p>}
                                             <input type="text" required placeholder="Member Name" className="w-full text-sm px-3 py-2 bg-white/60 rounded-xl mb-2 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/30 border border-white/80" value={newMember.name} onChange={e => setNewMember({ ...newMember, name: e.target.value })} />
                                             <input type="email" required placeholder="Email Address" className="w-full text-sm px-3 py-2 bg-white/60 rounded-xl mb-2 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/30 border border-white/80" value={newMember.email} onChange={e => setNewMember({ ...newMember, email: e.target.value })} />
                                             <select
@@ -314,7 +319,7 @@ const TeamDashboard = () => {
                                                 <option value="Lead">Lead</option>
                                             </select>
                                             <div className="flex gap-2">
-                                                <button type="submit" className="flex-1 py-1.5 bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] text-white rounded-xl text-xs font-bold border border-white/40 shadow-sm hover:opacity-90">Save</button>
+                                                <button type="submit" disabled={memberSaving} className="flex-1 py-1.5 bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] text-white rounded-xl text-xs font-bold border border-white/40 shadow-sm hover:opacity-90">{memberSaving ? 'Saving...' : 'Save'}</button>
                                                 <button type="button" onClick={() => setShowAddMember(false)} className="flex-1 py-1.5 bg-white/60 text-slate-700 rounded-xl text-xs font-bold border border-white/80">Cancel</button>
                                             </div>
                                         </motion.form>
@@ -439,7 +444,17 @@ const TeamDashboard = () => {
                         </AnimatePresence>
 
                         {/* Hackathons List */}
-                        {hackathons.length === 0 ? (
+                        <div className="mb-4 relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                            <input
+                                type="text"
+                                placeholder="Search deployments..."
+                                className="w-full text-sm pl-10 pr-4 py-2 bg-white/60 rounded-xl placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/30 border border-white/80"
+                                value={searchHackathonTerm}
+                                onChange={(e) => setSearchHackathonTerm(e.target.value)}
+                            />
+                        </div>
+                        {filteredHackathons.length === 0 ? (
                             <motion.div variants={itemVariants} className="card p-12 text-center border-dashed border border-slate-300 bg-white/30">
                                 <AlertCircle className="mx-auto h-12 w-12 text-slate-400 mb-4" />
                                 <h3 className="text-lg font-bold text-slate-600">No active instances</h3>
@@ -447,7 +462,7 @@ const TeamDashboard = () => {
                             </motion.div>
                         ) : (
                             <div className="grid grid-cols-1 gap-4">
-                                {hackathons.map((h) => (
+                                {filteredHackathons.map((h) => (
                                     <motion.div variants={itemVariants} key={h._id} className="group relative">
                                         <div className="card p-5 block group-hover:-translate-y-1 transform transition-all duration-300 border-l-[4px] border-l-white/60 hover:border-l-[#3b82f6]">
                                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center relative z-10">

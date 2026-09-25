@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import api from '../api';
-import { AuthContext } from '../context/AuthContext';
-import { Search, Filter, ChevronRight, Code2, LogOut, Database, Trash2, Download, Users, Globe } from 'lucide-react';
+import { AuthContext } from '../context/AuthContextObj';
+import { Search, Filter, ChevronRight, Code2, LogOut, Trash2, Download, Globe } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Loader from '../components/Loader';
 
 const AdminTeamsList = () => {
