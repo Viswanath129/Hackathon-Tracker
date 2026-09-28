@@ -102,6 +102,33 @@ const dynamoService = {
     // ---------------------------------------------------------
     // PROJECTS
     // ---------------------------------------------------------
+    getProjectById: async (projectId) => {
+        let ExclusiveStartKey;
+
+        do {
+            const params = {
+                TableName: TABLE_NAME,
+                FilterExpression: "SK = :sk AND #type = :type",
+                ExpressionAttributeNames: {
+                    "#type": "type"
+                },
+                ExpressionAttributeValues: {
+                    ":sk": `PROJ#${projectId}`,
+                    ":type": "PROJECT"
+                },
+                ExclusiveStartKey
+            };
+
+            const data = await docClient.send(new ScanCommand(params));
+            if (data.Items && data.Items.length > 0) {
+                return data.Items[0];
+            }
+            ExclusiveStartKey = data.LastEvaluatedKey;
+        } while (ExclusiveStartKey);
+
+        return null;
+    },
+
     getProject: async (hackId, projId) => {
         const { Item } = await docClient.send(new GetCommand({
             TableName: TABLE_NAME,
