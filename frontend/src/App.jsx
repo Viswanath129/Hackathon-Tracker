@@ -1,7 +1,8 @@
 import { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { AuthProvider, AuthContext } from './context/AuthContext';
+import { AuthContext } from './context/AuthContext';
+import { AuthProvider } from './context/AuthProvider';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import TeamDashboard from './pages/TeamDashboard';
