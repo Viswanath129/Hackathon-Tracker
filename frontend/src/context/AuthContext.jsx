@@ -1,8 +1,9 @@
-import { createContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import PropTypes from 'prop-types';
+import { AuthContext } from './AuthContextDef';
 
-export const AuthContext = createContext();
+export { AuthContext };
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);

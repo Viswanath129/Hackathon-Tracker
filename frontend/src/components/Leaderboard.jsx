@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../api';
-import { Trophy, Star, Clock, Shield, Award, TrendingUp } from 'lucide-react';
+import { Trophy, Star, Clock, Shield, Award, TrendingUp, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
+import PropTypes from 'prop-types';
 
 const Leaderboard = ({ user }) => {
     const [teams, setTeams] = useState([]);
@@ -22,6 +23,33 @@ const Leaderboard = ({ user }) => {
         fetchLeaderboard();
     }, [user.token]);
 
+    const handleDownloadCSV = () => {
+        if (!teams || teams.length === 0) return;
+
+        const headers = ['Rank', 'Team Name', 'Institution', 'Project Title', 'Status', 'Rating'];
+        const csvContent = [
+            headers.join(','),
+            ...teams.map((t, index) => [
+                index + 1,
+                `"${t.team_id?.team_name || 'Expunged ID'}"`,
+                `"${t.team_id?.college || 'Generic Entity'}"`,
+                `"${t.project_title}"`,
+                t.isRated ? 'Rated' : 'Under Progress',
+                t.isRated ? t.rating : 'N/A'
+            ].join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'leaderboard.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const renderStars = (rating) => {
         return (
             <div className="flex gap-1">
@@ -40,16 +68,24 @@ const Leaderboard = ({ user }) => {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-4">
                 <div>
                     <h2 className="text-2xl font-black text-slate-800 flex items-center gap-2">
                         <Trophy className="text-[#3b82f6]" size={28} /> RANKINGS
                     </h2>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Live Global Standing</p>
                 </div>
-                <div className="bg-blue-50 px-4 py-2 rounded-2xl border border-blue-100 flex items-center gap-2">
-                    <TrendingUp size={16} className="text-[#3b82f6]" />
-                    <span className="text-xs font-black text-[#3b82f6] uppercase tracking-tighter">Real-time Metrics</span>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={handleDownloadCSV}
+                        className="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 px-4 py-2 rounded-2xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-all shadow-sm hover:shadow-md"
+                    >
+                        <Download size={16} className="text-[#3b82f6]" /> Download CSV
+                    </button>
+                    <div className="bg-blue-50 px-4 py-2 rounded-2xl border border-blue-100 flex items-center gap-2">
+                        <TrendingUp size={16} className="text-[#3b82f6]" />
+                        <span className="text-xs font-black text-[#3b82f6] uppercase tracking-tighter">Real-time Metrics</span>
+                    </div>
                 </div>
             </div>
 
@@ -114,6 +150,12 @@ const Leaderboard = ({ user }) => {
             </div>
         </div>
     );
+};
+
+Leaderboard.propTypes = {
+    user: PropTypes.shape({
+        token: PropTypes.string.isRequired,
+    }).isRequired,
 };
 
 export default Leaderboard;
