@@ -42,7 +42,7 @@ const getProgressLogs = async (projectId) => {
 
     try {
         const data = await docClient.send(new QueryCommand(params));
-        return data.Items;
+        return data.Items || [];
     } catch (error) {
         console.error("DynamoDB Query Error:", error);
         throw error;
