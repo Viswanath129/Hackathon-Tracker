@@ -145,6 +145,29 @@ const dynamoService = {
         }));
     },
 
+    getProjectById: async (projectId) => {
+        let items = [];
+        let exclusiveStartKey = undefined;
+        do {
+            const params = {
+                TableName: TABLE_NAME,
+                FilterExpression: "SK = :sk AND #type = :type",
+                ExpressionAttributeNames: { "#type": "type" },
+                ExpressionAttributeValues: {
+                    ":sk": `PROJ#${projectId}`,
+                    ":type": "PROJECT"
+                },
+                ExclusiveStartKey: exclusiveStartKey
+            };
+            const result = await docClient.send(new ScanCommand(params));
+            if (result.Items) {
+                items = items.concat(result.Items);
+            }
+            exclusiveStartKey = result.LastEvaluatedKey;
+        } while (exclusiveStartKey);
+        return items[0] || null;
+    },
+
     // ---------------------------------------------------------
     // REPORTS (ARTIFACTS)
     // ---------------------------------------------------------
