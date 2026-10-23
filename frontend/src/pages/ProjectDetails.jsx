@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, useCallback } from 'react';
 import api from '../api';
 import { AuthContext } from '../context/AuthContext';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Plus, FileText, CheckCircle2, Code2, Edit3, Save, X, Upload, Layers, Clock, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Plus, FileText, CheckCircle2, Code2, Edit3, Save, X, Upload, Layers, Clock, TrendingUp, Trash2, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Loader from '../components/Loader';
 
@@ -27,6 +27,8 @@ const ProjectDetails = () => {
 
     const [history, setHistory] = useState([]);
     const [historyLoading, setHistoryLoading] = useState(false);
+
+    const [searchTerm, setSearchTerm] = useState('');
 
     const fetchReports = useCallback(async (projectId) => {
         try {
@@ -94,6 +96,27 @@ const ProjectDetails = () => {
             fetchProjects();
             fetchHistory(projectId);
         } catch (error) { console.error('Error updating status', error); }
+    };
+
+    const handleDeleteProject = async (projectId) => {
+        if (!window.confirm('Are you sure you want to delete this project?')) return;
+        try {
+            const config = { headers: { Authorization: `Bearer ${user.token}` } };
+            await api.delete(`/api/team/projects/${projectId}?hackathon_id=${hackathonId}`, config);
+            if (activeProject && activeProject._id === projectId) {
+                setActiveProject(null);
+            }
+            fetchProjects();
+        } catch (error) { console.error('Error deleting project', error); }
+    };
+
+    const handleDeleteArtifact = async (artifactId) => {
+        if (!window.confirm('Are you sure you want to delete this artifact?')) return;
+        try {
+            const config = { headers: { Authorization: `Bearer ${user.token}` } };
+            await api.delete(`/api/team/reports/${artifactId}?project_id=${activeProject._id}`, config);
+            fetchReports(activeProject._id);
+        } catch (error) { console.error('Error deleting artifact', error); }
     };
 
     const handleFileUpload = async (e) => {
@@ -207,28 +230,52 @@ const ProjectDetails = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     {/* Sidebar */}
-                    <div className="lg:col-span-1 space-y-2">
-                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 pl-1">Projects</h3>
-                        {projects.length === 0 ? (
-                            <div className="p-8 border border-dashed border-slate-200 rounded-2xl text-center text-slate-400 text-xs font-medium">No projects yet.<br />Create your first one.</div>
+                    <div className="lg:col-span-1 space-y-4">
+                        <div className="flex items-center justify-between pl-1">
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Projects</h3>
+                        </div>
+
+                        <div className="relative mb-4">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Search size={14} className="text-slate-400" />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Search projects..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="input-field pl-9 text-xs py-2 h-9"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                        {projects.filter(p => p.project_title.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
+                            <div className="p-8 border border-dashed border-slate-200 rounded-2xl text-center text-slate-400 text-xs font-medium">No projects found.</div>
                         ) : (
-                            projects.map(p => {
+                            projects.filter(p => p.project_title.toLowerCase().includes(searchTerm.toLowerCase())).map(p => {
                                 const sc = statusConfig[p.status] || statusConfig['Idea'];
                                 return (
                                     <div
                                         key={p._id}
-                                        onClick={() => { setActiveProject(p); fetchReports(p._id); fetchHistory(p._id); setIsEditingProject(false); }}
-                                        className={`card p-4 cursor-pointer transition-all border-l-4 ${activeProject?._id === p._id ? 'border-l-[#3b82f6] bg-white/80 shadow-md' : 'border-l-transparent hover:border-l-[#3b82f6]/40 hover:bg-white/60'}`}
+                                        className={`card p-4 transition-all border-l-4 ${activeProject?._id === p._id ? 'border-l-[#3b82f6] bg-white/80 shadow-md' : 'border-l-transparent hover:border-l-[#3b82f6]/40 hover:bg-white/60'} group relative`}
                                     >
-                                        <h4 className={`text-sm font-bold truncate ${activeProject?._id === p._id ? 'text-slate-800' : 'text-slate-500'}`}>{p.project_title}</h4>
-                                        <div className={`mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${sc.color}`}>
-                                            <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`}></span>
-                                            {p.status}
+                                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                                            <button onClick={(e) => { e.stopPropagation(); handleDeleteProject(p._id); }} className="p-1.5 bg-red-100/80 text-red-600 rounded-lg hover:bg-red-200 transition-colors" title="Delete Project">
+                                                <Trash2 size={12} />
+                                            </button>
+                                        </div>
+                                        <div className="cursor-pointer" onClick={() => { setActiveProject(p); fetchReports(p._id); fetchHistory(p._id); setIsEditingProject(false); }}>
+                                            <h4 className={`text-sm font-bold truncate pr-6 ${activeProject?._id === p._id ? 'text-slate-800' : 'text-slate-500'}`}>{p.project_title}</h4>
+                                            <div className={`mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${sc.color}`}>
+                                                <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`}></span>
+                                                {p.status}
+                                            </div>
                                         </div>
                                     </div>
                                 );
                             })
                         )}
+                        </div>
                     </div>
 
                     {/* Main Content */}
@@ -331,9 +378,14 @@ const ProjectDetails = () => {
                                                             <p className="text-[10px] text-slate-400 mt-0.5">{new Date(r.createdAt).toLocaleString()}</p>
                                                         </div>
                                                     </div>
-                                                    <button onClick={() => handleDownload(r._id)} className="text-xs font-bold text-[#3b82f6] hover:text-[#2563eb] hover:underline underline-offset-4 uppercase tracking-widest">
-                                                        Download
-                                                    </button>
+                                                    <div className="flex items-center gap-4">
+                                                        <button onClick={() => handleDeleteArtifact(r._id)} className="text-xs font-bold text-red-500 hover:text-red-700 hover:underline underline-offset-4 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            Delete
+                                                        </button>
+                                                        <button onClick={() => handleDownload(r._id)} className="text-xs font-bold text-[#3b82f6] hover:text-[#2563eb] hover:underline underline-offset-4 uppercase tracking-widest">
+                                                            Download
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             ))
                                         )}

@@ -18,7 +18,9 @@ const {
     getProjectHistory,
     getSignedDownloadUrl,
     getLeaderboard,
-    getActivities
+    getActivities,
+    deleteProject,
+    deleteArtifact
 } = require('../controllers/teamController');
 
 const router = express.Router();
@@ -53,11 +55,17 @@ router.route('/projects/:hackathonId')
 router.route('/projects/:id/status')
     .put(protect, updateProjectStatus);
 
+router.route('/projects/:id')
+    .delete(protect, deleteProject);
+
 router.route('/projects/:id/history')
     .get(protect, getProjectHistory);
 
 router.route('/reports/:id/download')
     .get(protect, getSignedDownloadUrl);
+
+router.route('/reports/:id')
+    .delete(protect, deleteArtifact);
 
 router.route('/projects/:id/report')
     .post(protect, upload.single('pdf'), uploadReport);
