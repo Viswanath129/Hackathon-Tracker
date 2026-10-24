@@ -124,6 +124,31 @@ const dynamoService = {
         return (Items || []).filter(i => i.type === 'PROJECT');
     },
 
+    getProjectById: async (projectId) => {
+        let lastEvaluatedKey = undefined;
+        do {
+            const params = {
+                TableName: TABLE_NAME,
+                FilterExpression: 'SK = :sk AND #type = :type',
+                ExpressionAttributeNames: {
+                    '#type': 'type'
+                },
+                ExpressionAttributeValues: {
+                    ':sk': `PROJ#${projectId}`,
+                    ':type': 'PROJECT'
+                },
+                ExclusiveStartKey: lastEvaluatedKey
+            };
+            const response = await docClient.send(new ScanCommand(params));
+            if (response.Items && response.Items.length > 0) {
+                return response.Items[0];
+            }
+            lastEvaluatedKey = response.LastEvaluatedKey;
+        } while (lastEvaluatedKey);
+
+        return null;
+    },
+
     saveProject: async (hackathonId, projectData) => {
         const projId = projectData._id || `proj_${Date.now()}`;
         const item = {
