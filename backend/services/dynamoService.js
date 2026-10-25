@@ -64,6 +64,31 @@ const dynamoService = {
         return Item;
     },
 
+    getProjectById: async (projId) => {
+        let lastEvaluatedKey;
+        const targetSK = `PROJ#${projId}`;
+        do {
+            const params = {
+                TableName: TABLE_NAME,
+                FilterExpression: "SK = :sk AND #type = :type",
+                ExpressionAttributeNames: {
+                    "#type": "type"
+                },
+                ExpressionAttributeValues: {
+                    ":sk": targetSK,
+                    ":type": "PROJECT"
+                },
+                ExclusiveStartKey: lastEvaluatedKey
+            };
+            const response = await docClient.send(new ScanCommand(params));
+            if (response.Items && response.Items.length > 0) {
+                return response.Items[0];
+            }
+            lastEvaluatedKey = response.LastEvaluatedKey;
+        } while (lastEvaluatedKey);
+        return null;
+    },
+
     getHackathonsByUser: async (email) => {
         const { Items } = await docClient.send(new QueryCommand({
             TableName: TABLE_NAME,
