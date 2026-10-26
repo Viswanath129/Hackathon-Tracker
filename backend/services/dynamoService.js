@@ -110,6 +110,38 @@ const dynamoService = {
         return Item;
     },
 
+    /**
+     * Look up project by project ID across all hackathons using ScanCommand with pagination loop
+     * Uses #type ExpressionAttributeName to avoid reserved keyword errors.
+     */
+    getProjectById: async (projectId) => {
+        let exclusiveStartKey;
+        const targetSK = `PROJ#${projectId}`;
+
+        do {
+            const params = {
+                TableName: TABLE_NAME,
+                FilterExpression: "SK = :sk AND #type = :type",
+                ExpressionAttributeNames: {
+                    "#type": "type"
+                },
+                ExpressionAttributeValues: {
+                    ":sk": targetSK,
+                    ":type": "PROJECT"
+                },
+                ExclusiveStartKey: exclusiveStartKey
+            };
+
+            const data = await docClient.send(new ScanCommand(params));
+            if (data.Items && data.Items.length > 0) {
+                return data.Items[0];
+            }
+            exclusiveStartKey = data.LastEvaluatedKey;
+        } while (exclusiveStartKey);
+
+        return null;
+    },
+
     getProjectsByHackathon: async (hackathonId) => {
         const { Items } = await docClient.send(new QueryCommand({
             TableName: TABLE_NAME,
