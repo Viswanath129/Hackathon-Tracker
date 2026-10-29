@@ -110,6 +110,32 @@ const dynamoService = {
         return Item;
     },
 
+    getProjectById: async (projectId) => {
+        let ExclusiveStartKey = undefined;
+        do {
+            const params = {
+                TableName: TABLE_NAME,
+                FilterExpression: "(SK = :sk OR _id = :projId OR teamId = :projId) AND #type = :type",
+                ExpressionAttributeNames: {
+                    "#type": "type"
+                },
+                ExpressionAttributeValues: {
+                    ":sk": `PROJ#${projectId}`,
+                    ":projId": projectId,
+                    ":type": "PROJECT"
+                },
+                ExclusiveStartKey
+            };
+            const response = await docClient.send(new ScanCommand(params));
+            if (response.Items && response.Items.length > 0) {
+                return response.Items[0];
+            }
+            ExclusiveStartKey = response.LastEvaluatedKey;
+        } while (ExclusiveStartKey);
+
+        return null;
+    },
+
     getProjectsByHackathon: async (hackathonId) => {
         const { Items } = await docClient.send(new QueryCommand({
             TableName: TABLE_NAME,
@@ -143,6 +169,39 @@ const dynamoService = {
             TableName: TABLE_NAME,
             Key: { PK: `HACK#${hackId}`, SK: `PROJ#${projId}` }
         }));
+    },
+
+    // ---------------------------------------------------------
+    // PROGRESS LOGS
+    // ---------------------------------------------------------
+    saveProgressLog: async (projectId, logData) => {
+        const timestamp = new Date().toISOString();
+        const logId = `log_${Date.now()}`;
+        const item = {
+            PK: `PROJ#${projectId}`,
+            SK: `LOG#${timestamp}`,
+            _id: logId,
+            projectId,
+            teamId: projectId,
+            updateText: logData.updateText,
+            deltaPercentage: logData.deltaPercentage,
+            type: 'PROGRESS_LOG',
+            timestamp
+        };
+        await docClient.send(new PutCommand({ TableName: TABLE_NAME, Item: item }));
+        return item;
+    },
+
+    getProgressLogs: async (projectId) => {
+        const { Items } = await docClient.send(new QueryCommand({
+            TableName: TABLE_NAME,
+            KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
+            ExpressionAttributeValues: {
+                ":pk": `PROJ#${projectId}`,
+                ":sk": "LOG#"
+            }
+        }));
+        return Items || [];
     },
 
     // ---------------------------------------------------------
