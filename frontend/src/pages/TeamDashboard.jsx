@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import api from '../api';
 import { AuthContext } from '../context/AuthContext';
-import { User, Code2, Plus, Calendar, AlertCircle, LogOut, Settings, Trash2, Edit3, CheckCircle2, Clock, Eye, EyeOff, AlertTriangle, Flag, Image as ImageIcon, TrendingUp, Users, Database, UploadCloud } from 'lucide-react';
+import { User, Code2, Plus, Calendar, AlertCircle, LogOut, Settings, Trash2, Edit3, CheckCircle2, Clock, Flag, Image as ImageIcon, TrendingUp, Users, Database, } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Loader from '../components/Loader';
@@ -27,10 +27,7 @@ const TeamDashboard = () => {
 
     const [newMember, setNewMember] = useState({ name: '', email: '', rollno: '', role: 'Member' });
     const [showAddMember, setShowAddMember] = useState(false);
-    const [memberSaving, setMemberSaving] = useState(false);
-    const [memberError, setMemberError] = useState('');
-    const [memberSuccess, setMemberSuccess] = useState(false);
-    const [profileSaving, setProfileSaving] = useState(false);
+                const [profileSaving, setProfileSaving] = useState(false);
     const [profileSuccess, setProfileSuccess] = useState(false);
     const [profileError, setProfileError] = useState('');
 
@@ -84,8 +81,8 @@ const TeamDashboard = () => {
 
     const handleAddMember = async (e) => {
         e.preventDefault();
-        setMemberSaving(true);
-        setMemberError('');
+
+
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const updatedMembers = [...(profile.members || []), { ...newMember }];
@@ -93,16 +90,11 @@ const TeamDashboard = () => {
             if (res.status === 200) {
                 setNewMember({ name: '', email: '', rollno: '', role: 'Member' });
                 setShowAddMember(false);
-                setMemberSuccess(true);
-                setTimeout(() => setMemberSuccess(false), 3000);
+
+
                 fetchData();
             }
-        } catch (error) {
-            console.error('Failed to add member', error);
-            setMemberError(error.response?.data?.message || 'Failed to save. Please try again.');
-        } finally {
-            setMemberSaving(false);
-        }
+        } catch (error) { console.error('Failed to add member', error); }
     };
 
     const handleRemoveMember = async (memberEmail) => {
