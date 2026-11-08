@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import api from '../api';
 import { Trophy, Star, Clock, Shield, Award, TrendingUp } from 'lucide-react';
@@ -117,3 +118,9 @@ const Leaderboard = ({ user }) => {
 };
 
 export default Leaderboard;
+
+Leaderboard.propTypes = {
+    user: PropTypes.shape({
+        token: PropTypes.string.isRequired,
+    }).isRequired,
+};

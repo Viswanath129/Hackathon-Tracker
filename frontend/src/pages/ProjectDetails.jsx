@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import api from '../api';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObj';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Plus, FileText, CheckCircle2, Code2, Edit3, Save, X, Upload, Layers, Clock, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Plus, FileText, CheckCircle2, Code2, Edit3, Save, X, Upload, Layers, Clock, TrendingUp, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Loader from '../components/Loader';
 
@@ -115,6 +115,24 @@ const ProjectDetails = () => {
             setTimeout(() => setUploadError(''), 4000);
         } finally {
             setUploading(false);
+        }
+    };
+
+    const handleDeleteProject = async (projectId) => {
+        if (!window.confirm('Are you sure you want to delete this project?')) return;
+        try {
+            const config = { headers: { Authorization: `Bearer ${user.token}` } };
+            await api.delete(`/api/team/projects/${projectId}?hackathon_id=${hackathonId}`, config);
+            setProjects(projects.filter(p => p._id !== projectId));
+            if (activeProject && activeProject._id === projectId) {
+                setActiveProject(null);
+                setReports([]);
+                setHistory([]);
+            }
+        } catch (error) {
+            console.error('Error deleting project', error);
+            setUploadError(error.response?.data?.message || 'Failed to delete project.');
+            setTimeout(() => setUploadError(''), 4000);
         }
     };
 
@@ -254,6 +272,9 @@ const ProjectDetails = () => {
                                                         <h3 className="text-2xl font-extrabold text-slate-800 tracking-tight">{activeProject.project_title}</h3>
                                                         <button onClick={() => { setIsEditingProject(true); setEditProjectData({ project_title: activeProject.project_title, description: activeProject.description }); }} className="p-1.5 text-slate-300 hover:text-[#3b82f6] transition-colors rounded-lg">
                                                             <Edit3 size={16} />
+                                                        </button>
+                                                        <button onClick={() => handleDeleteProject(activeProject._id)} className="p-1.5 text-slate-300 hover:text-red-500 transition-colors rounded-lg">
+                                                            <Trash2 size={16} />
                                                         </button>
                                                     </div>
                                                     <p className="text-slate-500 text-sm leading-relaxed">{activeProject.description || <span className="italic">No description provided.</span>}</p>
