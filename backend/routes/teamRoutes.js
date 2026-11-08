@@ -11,6 +11,7 @@ const {
     createProject,
     getProjects,
     updateProjectStatus,
+    deleteProject,
     uploadReport,
     getReports,
     reportIssue,
@@ -52,6 +53,9 @@ router.route('/projects/:hackathonId')
 
 router.route('/projects/:id/status')
     .put(protect, updateProjectStatus);
+
+router.route('/projects/:id')
+    .delete(protect, deleteProject);
 
 router.route('/projects/:id/history')
     .get(protect, getProjectHistory);

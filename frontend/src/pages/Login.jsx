@@ -1,7 +1,8 @@
+import PropTypes from 'prop-types';
 import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObj';
 import { Code2, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -137,3 +138,7 @@ const Login = ({ isAdmin = false }) => {
 };
 
 export default Login;
+
+Login.propTypes = {
+    isAdmin: PropTypes.bool,
+};

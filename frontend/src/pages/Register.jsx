@@ -1,7 +1,8 @@
+import PropTypes from 'prop-types';
 import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObj';
 import { Eye, EyeOff, Code2, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -141,3 +142,7 @@ const Register = ({ isAdmin = false }) => {
 };
 
 export default Register;
+
+Register.propTypes = {
+    isAdmin: PropTypes.bool,
+};
