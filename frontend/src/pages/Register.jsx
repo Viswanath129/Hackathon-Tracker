@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../context/AuthContext';
@@ -141,3 +142,7 @@ const Register = ({ isAdmin = false }) => {
 };
 
 export default Register;
+
+Register.propTypes = {
+    isAdmin: PropTypes.bool
+};
