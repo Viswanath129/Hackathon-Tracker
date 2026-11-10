@@ -1,11 +1,13 @@
+import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import api from '../api';
-import { Trophy, Star, Clock, Shield, Award, TrendingUp } from 'lucide-react';
+import { Trophy, Star, Clock, Shield, Award, TrendingUp, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Leaderboard = ({ user }) => {
     const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
@@ -38,6 +40,13 @@ const Leaderboard = ({ user }) => {
 
     if (loading) return <div className="p-10 text-center text-slate-400 italic">Calculating rankings...</div>;
 
+    const filteredTeams = teams.filter(project => {
+        const teamName = project.team_id?.team_name || 'Expunged ID';
+        const projectTitle = project.project_title || '';
+        return teamName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+               projectTitle.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between mb-2">
@@ -53,8 +62,19 @@ const Leaderboard = ({ user }) => {
                 </div>
             </div>
 
+            <div className="relative mb-4 group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#3b82f6] transition-colors" size={18} />
+                <input
+                    type="text"
+                    placeholder="Search by team or project name..."
+                    className="w-full pl-12 pr-4 py-3 bg-white/60 border border-white/80 focus:bg-white focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400 rounded-2xl text-sm transition-all"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+            </div>
+
             <div className="grid grid-cols-1 gap-4">
-                {teams.map((project, index) => (
+                {filteredTeams.map((project, index) => (
                     <motion.div
                         key={project._id}
                         initial={{ opacity: 0, x: -10 }}
@@ -105,10 +125,10 @@ const Leaderboard = ({ user }) => {
                     </motion.div>
                 ))}
 
-                {teams.length === 0 && (
+                {filteredTeams.length === 0 && (
                     <div className="p-20 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
                         <Trophy className="mx-auto text-slate-200 mb-4" size={48} />
-                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No rankings generated yet.</p>
+                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No rankings match your search.</p>
                     </div>
                 )}
             </div>
@@ -117,3 +137,9 @@ const Leaderboard = ({ user }) => {
 };
 
 export default Leaderboard;
+
+Leaderboard.propTypes = {
+    user: PropTypes.shape({
+        token: PropTypes.string.isRequired
+    }).isRequired
+};
