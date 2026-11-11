@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import api from '../api';
 import { AuthContext } from '../context/AuthContext';
-import { Search, Filter, ChevronRight, Code2, LogOut, Database, Trash2, Download, Users, Globe } from 'lucide-react';
+import { Search, Filter, ChevronRight, Code2, LogOut, Trash2, Download, Globe } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Loader from '../components/Loader';
 
 const AdminTeamsList = () => {
@@ -44,10 +44,28 @@ const AdminTeamsList = () => {
     const getInitials = (name) => name?.charAt(0).toUpperCase() || '?';
 
     const handleDownload = () => {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(teams, null, 2));
+        if (!teams || teams.length === 0) return;
+
+        // Define CSV headers
+        const headers = ['Team Name', 'Email', 'Institution', 'Skills', 'Projects Count'];
+
+        // Map teams to CSV rows
+        const csvRows = teams.map(team => {
+            const teamName = team.team_name ? `"${team.team_name.replace(/"/g, '""')}"` : '""';
+            const email = team.email ? `"${team.email.replace(/"/g, '""')}"` : '""';
+            const college = team.college ? `"${team.college.replace(/"/g, '""')}"` : '"Internal Cluster"';
+            const skills = team.skills ? `"${team.skills.join(', ').replace(/"/g, '""')}"` : '""';
+            const projectsCount = team.projects ? team.projects.length : 0;
+            return [teamName, email, college, skills, projectsCount].join(',');
+        });
+
+        // Combine headers and rows
+        const csvString = [headers.join(','), ...csvRows].join('\n');
+
+        const dataStr = "data:text/csv;charset=utf-8," + encodeURIComponent(csvString);
         const downloadAnchorNode = document.createElement('a');
         downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "global_team_directory.json");
+        downloadAnchorNode.setAttribute("download", "global_team_directory.csv");
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
